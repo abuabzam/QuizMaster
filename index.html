@@ -4,116 +4,164 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }
+        .note-item { transition: all 0.2s ease; }
+        .note-item:hover { transform: translateX(4px); }
+        .note-item.active { border-left: 4px solid #3b82f6; background-color: #eff6ff; }
+        #editor-content { min-height: 60vh; outline: none; }
+    </style>
 </head>
-<body>
-        <section class="sidebar">
-            <div>
-                <h2>QuizMaster</h2>
+<body class="flex  bg-gray-100 text-gray-800 ">
+        <section class="flex flex-col flex-nowrap w-64  p-4  gap-8  ">
+            <div class="flex flex-nowrap items-baseline  h-auto p-2 gap-x-4 py-8  border-b-4 border-gray-300">
+                <svg xmlns="http://www.w3.org/2000/svg" width="1.95em" height="1.95em" viewBox="0 0 16 16">
+                    <path d="M0 0h16v16H0z" fill="none" />
+                    <path fill="currentColor" d="M6.25 1c.463 0 .892.142 1.25.382v12.985A2.73 2.73 0 0 1 5.75 15H5.5a2.5 2.5 0 0 1-2.467-2.111a2.956 2.956 0 0 1-.207-5.537A2.5 2.5 0 0 1 2 5.5a2.5 2.5 0 0 1 2.01-2.452A2.25 2.25 0 0 1 6.25 1m3.5 0c1.175 0 2.137.9 2.24 2.048A2.5 2.5 0 0 1 14 5.5a2.5 2.5 0 0 1-.826 1.852a2.956 2.956 0 0 1-.207 5.537A2.5 2.5 0 0 1 10.5 15h-.25a2.73 2.73 0 0 1-1.75-.633V1.382C8.858 1.142 9.287 1 9.75 1" />
+                </svg>
+                <h2 class="font-bold text-3xl">QuizMaster</h2>
             </div>
-            <div>
-                <h5>Dashboard</h5>
+            <div class="flex flex-nowrap item-center  h-9 p-2 gap-x-4 items-baseline">
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 8 8">
+	                <path d="M0 0h8v8H0z" fill="none" />
+	                <path fill="currentColor" d="M1 8h2V5h2v3h2V4h1L4 0L0 4h1" />
+                    </svg>
+
+                <h5 class="font-semibold text-xl">Dashboard</h5>
             </div>
-            <div>
-                <h5>Create Quiz</h5>
+            <div class="flex flex-nowrap item-center  h-9 p-2  gap-x-4 items-baseline">
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+	                <path d="M0 0h24v24H0z" fill="none" />
+	                <path fill="currentColor" d="M19 12.998h-6v6h-2v-6H5v-2h6v-6h2v6h6z" />
+                </svg>
+
+                <h5 class="font-semibold text-xl">Create Quiz</h5>
             </div>
-            <div>
-                <h5>Analytics</h5>
+            <div class="flex flex-nowrap item-center  h-9 p-2  gap-x-4 items-baseline">
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+	                <path d="M0 0h24v24H0z" fill="none" />
+	                <path fill="currentColor" d="m16 11.78l4.24-7.33l1.73 1l-5.23 9.05l-6.51-3.75L5.46 19H22v2H2V3h2v14.54L9.5 8z" />
+                </svg>
+
+                <h5 class="font-semibold text-xl">Analytics</h5>
             </div>
         </section> 
-    <section>
-        <section>
-            <div>
-                <h1>Dashboard</h1>
-                <p>Manage your quizzes and track progress.</p>
-                <button>New Quiz</button>
+    <section class="m-12 w-full p-9">
+        <section class=" hidden flex flex-col ">
+            <div class=" flex">
+                <div class="flex  flex-col flex-grow  justify-items-stretch">
+                    <h1 class="text-4xl font-bold ">Dashboard</h1>
+                    <p class="text-sm pt-2">Manage your quizzes and track progress.</p>
+                </div>
+                <div class="flex-shrink-1 ">
+                    <button class=" border-2 border-blue-800 bg-blue-800 px-4 py-2 text-white font-bold rounded-lg " >+ New Quiz</button>
+                </div>
             </div>
-            <div>
-                <h3>No quizzes available</h3>
-                <p>Create your first quiz to get started.</p>
+
+
+            <div class=" flex flex-col items-center bg-gray-300 rounded-lg py-24 m-6 border-4 border-gray-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="6.25em" height="6em" viewBox="0 0 640 512">
+	                <path d="M0 0h640v512H0z" fill="none" />
+	                <path fill="currentColor" d="M425.7 256c-16.9 0-32.8-9-41.4-23.4L320 126l-64.2 106.6c-8.7 14.5-24.6 23.5-41.5 23.5c-4.5 0-9-.6-13.3-1.9L64 215v178c0 14.7 10 27.5 24.2 31l216.2 54.1c10.2 2.5 20.9 2.5 31 0L551.8 424c14.2-3.6 24.2-16.4 24.2-31V215l-137 39.1c-4.3 1.3-8.8 1.9-13.3 1.9m212.6-112.2L586.8 41c-3.1-6.2-9.8-9.8-16.7-8.9L320 64l91.7 152.1c3.8 6.3 11.4 9.3 18.5 7.3l197.9-56.5c9.9-2.9 14.7-13.9 10.2-23.1M53.2 41L1.7 143.8c-4.6 9.2.3 20.2 10.1 23l197.9 56.5c7.1 2 14.7-1 18.5-7.3L320 64L69.8 32.1c-6.9-.8-13.5 2.7-16.6 8.9" />
+                </svg>
+
+                <h3 class="text-xl font-semibold">No quizzes available</h3>
+                <p class="text-gray-500">Create your first quiz to get started.</p>
             </div>
         </section>
 
-        <section>
+        <section class=" hidden flex flex-col ">
             <div>
-                <h2>Quiz Builder</h2>
+                <h2  class="text-3xl font-bold " >Quiz Builder</h2>
             </div>
-            <div>
-                <h3>Basic Info</h3>
-                <input type="text" placeholder="Quiz Title">
-                <select>
-                    <option value="gk" >General Knowledge</option>
-                    <option value="science">Science</option>
-                    <option value="math">Mathematics</option>
-                    <option value="history">History</option>
-                    <option value="programming">Programming</option>
-                </select>
-                <input type="number" placeholder="Time Limit (minutes, 0 for none)">
-                <input type="text" placeholder="Short Description">
+            <div class="mt-2 p-8 border-2 border-gray-300 rounded-lg ">
+                <h3 class="text-xl text-blue-700 font-semibold">Basic Info</h3>
+                <div class="grid  grid-cols-2 gap-4">
+                    <input type="text" placeholder="Quiz Title" class="p-2 border-2 rounded-lg hover:border-blue-700">
+                    <select class="p-2 border-2 rounded-lg hover:border-blue-700">
+                        <option value="gk" >General Knowledge</option>
+                        <option value="science">Science</option>
+                        <option value="math">Mathematics</option>
+                        <option value="history">History</option>
+                        <option value="programming">Programming</option>
+                    </select>
+                    <input type="number" placeholder="Time Limit (minutes, 0 for none)" class="p-2 border-2 rounded-lg hover:border-blue-700">
+                    <input type="text" placeholder="Short Description" class="p-2 border-2 rounded-lg hover:border-blue-700">
+                </div>
             </div>
         </section>
 
-        <section>
-            <div>
-                <h2>Questions</h2>
-            </div>
-            <div>
+        <section class=" hidden mt-4 border-2 border-gray-300 rounded-lg p-8">
+            <div >
                 <div>
-                    <h6>QUESTION TEXT</h6>
-                    <input type="text">
+                    <div class="flex flex-nowrap items-center justify-between  ">
+                        <h6 class="text-lg font-semibold text-gray-600 justify-self-start">QUESTION TEXT</h6>
+                        <svg class=" "xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 24 24">
+	                        <path d="M0 0h24v24H0z" fill="none" />
+	                        <path fill="currentColor" d="M19 4h-3.5l-1-1h-5l-1 1H5v2h14M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6z" />
+                        </svg>           
+                    </div>
+                    <input type="text" class="p-2 w-full border-2 rounded-lg hover:border-blue-700">
+
                 </div>
 
-                <div>
-                    <div>
+                <div class="grid grid-cols-2 gap-6 mt-4 "> 
+                    <div class="flex flex-nowrap gap-2 ">
                         <input type="radio" id="option1" value="option1">
-                        <label for="option1">Option 1</label>
+                        <label for="option1" class="border-2 p-2 flex flex-grow border-gray-300 bg-white rounded-lg">Option 1</label>
                     </div>
-                    <div>
+                    <div class="flex flex-nowrap gap-2 ">
                         <input type="radio" id="option2" value="option2">
-                        <label for="option2">Option 2</label>
+                        <label for="option2" class="border-2 p-2 flex flex-grow border-gray-300 bg-white rounded-lg">Option 2</label>
                     </div>
-                    <div>
+                    <div class="flex flex-nowrap gap-2 ">
                         <input type="radio" id="option3" value="option3">
-                        <label for="option3">Option 3</label>
+                        <label for="option3" class="border-2 p-2 flex flex-grow border-gray-300 bg-white rounded-lg">Option 3</label>
                     </div>
-                    <div>
+                    <div class="flex flex-nowrap gap-2 ">
                         <input type="radio" id="option4" value="option4">
-                        <label for="option4">Option 4</label>
+                        <label for="option4" class="border-2 p-2 flex flex-grow border-gray-300 bg-white rounded-lg">Option 4</label>
                     </div>
                 </div>
-                <div>
-                    <div>
-                        <h6>EXPLANATION(OPTIONAL)</h6>
-                        <input type="text">
+                    <div class="mt-4 grid grid-cols-2 gap-4 ">
+                        <div class=" flex flex-col gap-2 ">
+                        <h6 class="text-md font-semibold text-gray-600  ">EXPLANATION(OPTIONAL)</h6>
+                        <input type="text" class="p-2 w-full border-2 rounded-lg hover:border-blue-700">
                     </div>
-                    <div>
-                        <h6>TAGS(OPTIONAL)</h6>
-                        <input type="text">
+                    <div class=" flex flex-col gap-2 ">
+                        <h6 class="text-md font-semibold text-gray-600 " >TAGS(OPTIONAL)</h6>
+                        <input type="text" class="p-2 w-full border-2 rounded-lg hover:border-blue-700">
                     </div>
                 </div>
             </div>
 
 
-            <div>
+            <div class="flex  flex-grow p-4 border-2 justify-center border-dashed border-gray-400 bg-gray-300 rounded-lg mt-4">
                 <h4> + Add Question </h4>
             </div>
-
-            <div>
-                <button>Save Quiz</button>
+            <hr class="my-4 border-gray-400">
+            <div class="mt-4 flex justify-end">
+                <button class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600">Save Quiz</button>
             </div>
         </section>
 
 
         <section>
-            <h2>Performance Analytics</h2>
+            <h2 class="text-3xl font-bold ">Performance Analytics</h2>
 
-
-            <div>
-                <h3>Attempt History</h3>
-                <p>No data yet</p>
-            </div>
-            <div>
-                <h3>topic Weaknesses</h3>
-                <p>No data yet</p>
+            <div class="grid grid-cols-2 gap-4 mt-4 grid-rows-[300px_200px]  ">
+                <div class="border-2 p-6 rounded-lg bg-gray-200 flex flex-col justify-between  ">
+                    <h3 class="text-xl font-semibold ">Attempt History</h3>
+                    <p class="font-semibold text-gray-600">No data yet</p>
+                </div>
+                <div class="border-2 p-6 rounded-lg bg-gray-200 ">
+                    <h3 class="text-xl font-semibold ">Topic Weaknesses</h3>
+                </div>
             </div>
         </section>
     </section>
