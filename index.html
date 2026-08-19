@@ -59,7 +59,7 @@
         </section> 
     <section class="m-12 w-full p-9 flex flex-col gap-y-4">
         <div class="flex flex-nowarp justify-end">
-                <button onclick="toggle()" id="darkModeBtn" class="p-2 rounded-lg bg-gray-200 dark:bg-gray-600">🌙</button>
+                <button onclick="toggleTheme()" id="darkModeBtn" class="p-2 rounded-lg bg-gray-200 dark:bg-gray-600">🌙</button>
             </div>
         <section class="  flex flex-col ">
             <div class=" flex">
@@ -68,7 +68,7 @@
                     <p class="text-sm pt-2 dark:text-gray-400">Manage your quizzes and track progress.</p>
                 </div>
                 <div class="flex-shrink-1 ">
-                    <button class=" border-2 border-blue-800 bg-blue-800 px-4 py-2 text-white font-bold rounded-lg " >+ New Quiz</button>
+                    <button  class=" border-2 border-blue-800 bg-blue-700 px-4 py-2 text-white font-bold rounded-lg hover:bg-blue-900" >+ New Quiz</button>
                 </div>
             </div>
 
@@ -155,7 +155,7 @@
             </div>
             <hr class="my-4 border-gray-400 dark:border-gray-500">
             <div class="mt-4 flex justify-end">
-                <button class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600">Save Quiz</button>
+                <button onclick="saveQuiz()" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600">Save Quiz</button>
             </div>
         </section>
 
@@ -178,22 +178,70 @@
 </body>
 
 <script>
+        function setThemeCookie(name, value, days){
 
-        function toggle() {
+            const date = new Date();
+            
+            date.setTime(
+                date.getTime()+days*24*60*60*1000
+            );
 
-    const darkModeBtn = document.getElementById('darkModeBtn');
+            document.cookie = `${name}=${value}; expires=${date.toUTCString()}; path=/`;
+        }
+
+        function getCookie(name){
+
+            const cookies = document.cookie.split("; ");
+
+            for (let cookie of cookies){
+                
+                const[key, value] = cookie.split("=");
+
+                if (key === name){
+                    return value;
+                }
+            }
+            return null;
+        }
+        function toggleTheme() {
+
+            const darkModeBtn = document.getElementById('darkModeBtn');
     
-    if (document.documentElement.classList.contains('dark')) {
+            if (document.documentElement.classList.contains('dark')) {
 
-        document.documentElement.classList.remove('dark');
-        darkModeBtn.textContent = '🌙';
+                document.documentElement.classList.remove('dark');
+                darkModeBtn.textContent = '🌙';
+                setThemeCookie('theme','light',30);
 
-    } else {
+            } else {
 
-        document.documentElement.classList.add('dark');
-        darkModeBtn.textContent = '☀️';
+                document.documentElement.classList.add('dark');
+                darkModeBtn.textContent = '☀️';
+                setThemeCookie('theme','dark',30);
 
-    }
-}
+            }
+        }
+
+        function loadTheme(){
+
+            const theme = getCookie('theme');
+            const darkModeBtn = document.getElementById("darkModeBtn");
+
+            if (theme === 'dark'){
+
+                document.documentElement.classList.add('dark');
+                darkModeBtn.textContent = "☀️";
+
+            }else{
+
+                document.documentElement.classList.remove('dark');
+                darkModeBtn.textContent = '🌙';
+
+            }
+
+        }
+        document.addEventListener('DOMContentLoaded',loadTheme);
+
+
     </script>
 </html>
