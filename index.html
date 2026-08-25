@@ -183,7 +183,7 @@
 </body>
 
 <script>
-        function setThemeCookie(name, value, days){
+        function setCookie(name, value, days){
 
             const date = new Date();
             
@@ -194,19 +194,25 @@
             document.cookie = `${name}=${value}; expires=${date.toUTCString()}; path=/`;
         }
 
-        function getCookie(name){
+        function getCookie(name) {
 
             const cookies = document.cookie.split("; ");
 
-            for (let cookie of cookies){
-                
-                const[key, value] = cookie.split("=");
+            for (const cookie of cookies) {
 
-                if (key === name){
-                    return value;
+                const index = cookie.indexOf("=");
+
+                if (index === -1) continue;
+
+                const key = cookie.substring(0, index);
+                const value = cookie.substring(index + 1);
+
+                if (key === name) {
+                    return decodeURIComponent(value);
                 }
             }
-            return null;
+
+        return null;
         }
         function toggleTheme() {
 
@@ -216,13 +222,13 @@
 
                 document.documentElement.classList.remove('dark');
                 darkModeBtn.textContent = '🌙';
-                setThemeCookie('theme','light',30);
+                setCookie('theme','light',30);
 
             } else {
 
                 document.documentElement.classList.add('dark');
                 darkModeBtn.textContent = '☀️';
-                setThemeCookie('theme','dark',30);
+                setCookie('theme','dark',30);
 
             }
         }
@@ -293,7 +299,7 @@
 
             const quiz = {
                 title : document.getElementById('quizTitle').value,
-                category : document.getElementById('catergory').value,
+                category : document.getElementById('category').value,
                 timelimit : document.getElementById('timeLimit').value,
                 description : document.getElementById('description').value,
                 questions : []
@@ -304,14 +310,14 @@
             questionBlocks.forEach((block, index) => {
                 const question = {
 
-                    qn : block.querySelector('.qn').value,
-                    option1 : block.querySelector('.option1').value,
-                    option2 : block.querySelector('.option2').value,
-                    option3 : block.querySelector('.option3').value,
-                    option4 : block.querySelector('.option4').value,
-                    correctAnswer : block.querySelector('input[type="radio"]:checked')?.value,
-                    explanation : block.querySeletor('.explanation').value,
-                    tag : block.querySelector('.tag').value
+                    q : block.querySelector('.qn').value.trim(),
+                    o1 : block.querySelector('.option1').value.trim(),
+                    o2 : block.querySelector('.option2').value.trim(),
+                    o3 : block.querySelector('.option3').value.trim(),
+                    o4 : block.querySelector('.option4').value.trim(),
+                    cA : block.querySelector('input[type="radio"]:checked')?.value || null,
+                    ex : block.querySelector('.explanation').value.trim(),
+                    tag : block.querySelector('.tag').value.trim()
                     
                 };
 
@@ -321,46 +327,142 @@
             return quiz;
         }
 
-    const addQuestionBtn = document.getElementById('addQuestionBtn');
-    const questionContainer = document.getElementById('questionContainer');
-    let questionCount = 1;
 
-    addQuestionBtn.addEventListener('click', function (){
-        questionCount ++;
-        const questionBlock = document.querySelector('.questionBlock');
-        const newQuestionBlock = questionBlock.cloneNode(true);
 
-        const radios = newQuestionBlock.querySelectorAll('input[type="radio"]');
-        radios.forEach(radio => {
-            radio.name = `correctAnswer${questionCount}`;
-            radio.checked = false;
-        });
+        const addQuestionBtn = document.getElementById('addQuestionBtn');
+        const questionContainer = document.getElementById('questionContainer');
+        let questionCount = 1;
 
-        const inputTexts = newQuestionBlock.querySelectorAll('input[type="text"]');
-        inputTexts.forEach(inputText => {
-            inputText.value = '';
-        });
+        addQuestionBtn.addEventListener('click', function (){
+            questionCount ++;
+            const questionBlock = document.querySelector('.questionBlock');
+            const newQuestionBlock = questionBlock.cloneNode(true);
 
-        questionContainer.appendChild(newQuestionBlock);
+            const radios = newQuestionBlock.querySelectorAll('input[type="radio"]');
+            radios.forEach(radio => {
+                radio.name = `correctAnswer-${questionCount}`;
+                radio.checked = false;
+            });
+
+            const inputTexts = newQuestionBlock.querySelectorAll('input[type="text"]');
+            inputTexts.forEach(inputText => {
+                inputText.value = '';
+            });
+
+            questionContainer.appendChild(newQuestionBlock);
        
-    });
+        });
 
-    questionContainer.addEventListener('click', function (e) {
-    const dltBtn = e.target.closest('.questionDltBtn');
-    if (!dltBtn) return;
+        questionContainer.addEventListener('click', function (e) {
+            const dltBtn = e.target.closest('.questionDltBtn');
+            if (!dltBtn) return;
 
-    const questionBlock = dltBtn.closest('.questionBlock');
-    if (document.querySelectorAll('.questionBlock').length > 1) {
-        const confirmDelete = confirm(
-            'Are you sure you want to delete this question?'
-        );
+            const questionBlock = dltBtn.closest('.questionBlock');
 
-        if (confirmDelete) {
-            questionBlock.remove();
+            if (document.querySelectorAll('.questionBlock').length > 1) {
+                const confirmDelete = confirm(
+                    'Are you sure you want to delete this question?'
+                );
+
+                if (confirmDelete) {
+                    questionBlock.remove();
+                }
+            }
+        });
+
+    function splitCookie(data,maxsize){
+        const chunks = [];
+
+        for(let i = 0 ;i<data.length;i+=maxsize){
+
+            chunks.push(data.substring(i,i+maxsize));
+
         }
+        return chunks;
+
+
     }
-});
+    function generateQuizId(){
+
+        return `Q_${crypto.randomUUID()}`;
+    }
+
+    function validateQuiz(QUIZ){
+        const errors = []
+        if (QUIZ.title === ''){
+                errors.push('Quiz title is required.');
+            }
+        if (QUIZ.category === ''){
+                errors.push('Quiz category is required.');;
+            }
+        if (QUIZ.questions.length === 0){
+            errors.push('Atleast one question is required.');
+        }
+        QUIZ.questions.forEach((qn,index) =>{
+           if(qn.q === ''){
+                errors.push(`Question ${index + 1} is empty`);
+           }
+           
+            if (qn.o1 === '' || qn.o2 === '' || qn.o3 === '' || qn.o4 === '') {
+            errors.push(`Question ${index + 1}: fill the options correctly  `);
+            }       
         
+        });
+        if(errors.length > 0){
+
+            return {valid : false, errors : errors};
+        }
+        else{
+
+            return  {valid :true };
+        } 
+            
+    }
+        
+    function saveQuiz(){
+        const QUIZ = readValues();
+        const result = validateQuiz(QUIZ);
+
+
+        if (!result.valid) {
+            alert(result.errors.join('\n'));   
+            return;
+        }
+        
+        const MAX_COOKIE_SIZE = 3000;
+        const quiz_id = generateQuizId();   
+        QUIZ.id = quiz_id;
+        
+        const encodedData = btoa(encodeURIComponent(JSON.stringify(QUIZ)));
+        const chunks = splitCookie(encodedData, MAX_COOKIE_SIZE);
+
+        chunks.forEach((chunk ,index) =>{
+            const cookie_name = `chunk_${quiz_id}__${index}`;
+
+            setCookie(cookie_name, chunk, 30);
+        });
+        setCookie(`chunk_${quiz_id}__meta`, chunks.length, 30);
+
+        let quiz_ids = [];
+        const existingIds = getCookie('quiz_ids');
+        if(existingIds){
+            try{
+                quiz_ids = JSON.parse(decodeURIComponent(atob(existingIds)));
+            }
+            catch (error) {
+                console.error('could not read read quiz IDs :',error);
+                
+                quiz_ids = [];
+            }
+         
+        }
+        quiz_ids.push(quiz_id);
+
+        setCookie("quiz_ids",btoa(encodeURIComponent(JSON.stringify(quiz_ids))),30);
+      
+        alert("Quiz saved successfully!");
+    }
+    
 
 
     </script>
