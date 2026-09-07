@@ -112,8 +112,8 @@
             <div class="questionBlock mt-8 border-b-2 p-4"  >
                 <div>
                     <div class="flex flex-nowrap items-center justify-between ">
-                        <h6 class="text-lg font-semibold text-gray-600 dark:text-gray-400 justify-self-start">QUESTION TEXT</h6>
-                       
+                        <h6 class=" text-lg font-semibold text-gray-600 dark:text-gray-400 justify-self-start">QUESTION TEXT</h6>
+                        
                         <button class="questionDltBtn">
                             <svg  class=" "xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 24 24" class="dark:text-gray-400">
 	                            <path d="M0 0h24v24H0z" fill="none" />
@@ -121,7 +121,7 @@
                             </svg>
                         </button>         
                     </div>
-                    <input class="qn" type="text" class=" dark:bg-gray-900  dark:text-white p-2 w-full border-2 rounded-lg hover:border-blue-700">
+                    <input  type="text" class="qn dark:bg-gray-900  dark:text-white p-2 w-full  border-2 rounded-lg hover:border-blue-700">
 
                 </div>
 
@@ -274,11 +274,12 @@
             questionSession.classList.add('hidden');
             performanceSession.classList.add('hidden');
             quizInterface.classList.add('hidden');
-            
+            quizList.classList.remove('hidden');
 
             const quiz_ids = getCookie("quiz_ids");
             if(!quiz_ids){
                 noQuizMessage.classList.remove('hidden');
+                
                 return;
             }
             try{
@@ -320,11 +321,11 @@
 
             const card = document.createElement('div');
 
-            card.className = `w-full max-w-sm min-h-[180px] p-4 bg-gray-800 border border-blue-600 rounded-lg flex flex-col justify-between `;
+            card.className = `mt-4 w-full max-w-sm min-h-[180px] p-4 bg-gray-800 border border-blue-600 rounded-lg flex flex-col justify-between `;
 
             card.innerHTML = `
 
-                <div class="flex items-start justify-between">
+                <div class="flex items-start justify-between ">
 
                     <span class="px-2 py-1 text-xs font-medium text-blue-400 bg-blue-950 rounded-sm ">
                         ${quiz.category}
@@ -356,7 +357,7 @@
                     </svg>
 
                     <span>
-                        ${quiz.timelimit || null}m
+                        ${quiz.timelimit || 0}m
                     </span>
 
                 </div>
@@ -520,6 +521,9 @@
             if (qn.o1 === '' || qn.o2 === '' || qn.o3 === '' || qn.o4 === '') {
             errors.push(`Question ${index + 1}: fill the options correctly  `);
             }       
+            if (!qn.cA) {
+                errors.push(`Question ${index + 1}: Please select a correct answer option.`);
+            }
         
         });
         if(errors.length > 0){
@@ -710,7 +714,7 @@
                 
                         <div>
                             <div class="text-slate-500 text-[11px] font-bold uppercase tracking-wider mb-1">TIME LIMIT</div>
-                            <div class="text-white text-lg font-bold">${quiz.timeLimit} mins</div>
+                            <div class="text-white text-lg font-bold">${quiz.timelimit} mins</div>
                         </div>
 
               
@@ -728,7 +732,7 @@
 
            
                     <div class="w-full bg-[#2a1619] border border-red-900/30 rounded-lg p-3 px-3.5 flex items-center gap-2.5 mb-6 box-border">
-                        <svg class="w-4.5 h-4.5 stroke-red-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg class="w-3.5 h-3.5 stroke-red-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
                             <line x1="12" y1="9" x2="12" y2="13"></line>
                             <line x1="12" y1="17" x2="12.01" y2="17"></line>
@@ -742,7 +746,7 @@
                         Start Exam Now
                     </button>
 
-                    <button onclick="cancelExam()" class="bg-transparent text-slate-500 hover:text-slate-300 font-semibold text-sm py-1 px-3 cursor-pointer transition-colors duration-200">
+                    <button onclick="goToDashboard()" class="bg-transparent text-slate-500 hover:text-slate-300 font-semibold text-sm py-1 px-3 cursor-pointer transition-colors duration-200">
                         Cancel
                     </button>
                 </div>
@@ -751,7 +755,7 @@
         `;
         
 
-
+  
         
 
         
