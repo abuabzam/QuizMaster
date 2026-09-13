@@ -413,10 +413,10 @@
         function readValues(){
 
             const quiz = {
-                title : document.getElementById('quizTitle').value,
-                category : document.getElementById('category').value,
-                timelimit : document.getElementById('timeLimit').value,
-                description : document.getElementById('description').value,
+                title : document.getElementById('quizTitle').value.trim(),
+                category : document.getElementById('category').value.trim(),
+                timelimit : document.getElementById('timeLimit').value.trim(),
+                description : document.getElementById('description').value.trim(),
                 questions : []
             } 
 
@@ -507,9 +507,7 @@
         if (QUIZ.title === ''){
                 errors.push('Quiz title is required.');
             }
-        if (QUIZ.category === ''){
-                errors.push('Quiz category is required.');;
-            }
+        
         if (QUIZ.questions.length === 0){
             errors.push('Atleast one question is required.');
         }
@@ -761,13 +759,13 @@
     
     let questionIndex = 0;
     let currentQuiz = null;
-    let userAnswers = [];
+    let userAnswers = new Array(currentQuiz.questions.length).fill(null); 
 
 
     function startExam(){
 
         questionIndex = 0;
-        userAnswers = [];
+    
 
         displayQuiz();
             
@@ -775,6 +773,7 @@
 
     function displayQuiz(){
 
+        let selectedOption = userAnswers[questionIndex];
         const quizInterface =document.getElementById("quizInterface");
         const quiz = currentQuiz;
 
@@ -813,30 +812,30 @@
 
                
                         <div class="options flex flex-col gap-y-3">
-                            <button class="option-btn group w-full bg-[#111827] hover:bg-[#1f293d] border border-slate-800 hover:border-blue-500/50 text-slate-200 text-left p-4 rounded-xl flex items-center gap-x-4 transition-all" onclick="selectOption(1)">
+                            <button class="option-btn group w-full bg-[#111827] ${selectedOption == 1 ? ' border-blue-500' : ' border-slate-800'} hover:bg-[#1f293d] border border-slate-800 hover:border-blue-500/50 text-slate-200 text-left p-4 rounded-xl flex items-center gap-x-4 transition-all" onclick="selectOption(1)">
                                 <span class="w-5 h-5 rounded-full border border-slate-600 group-hover:border-blue-400 flex items-center justify-center shrink-0">
-                                    <span class="w-2.5 h-2.5 rounded-full bg-blue-500 opacity-0 group-focus:opacity-100 group-active:opacity-100"></span>
+                                    <span class="w-2.5 h-2.5 rounded-full bg-blue-500 ${selectedOption == 1 ? 'opacity-100' : 'opacity-0'}"></span>
                                 </span>
                                 <span class="text-base font-medium">${quiz.questions[questionIndex].o1}</span>
                             </button>
 
-                            <button class="option-btn group w-full bg-[#111827] hover:bg-[#1f293d] border border-slate-800 hover:border-blue-500/50 text-slate-200 text-left p-4 rounded-xl flex items-center gap-x-4 transition-all" onclick="selectOption(2)">
+                            <button class="option-btn group w-full bg-[#111827]  ${selectedOption == 2 ? ' border-blue-500' : ' border-slate-800'} hover:bg-[#1f293d] border border-slate-800 hover:border-blue-500/50 text-slate-200 text-left p-4 rounded-xl flex items-center gap-x-4 transition-all" onclick="selectOption(2)">
                                 <span class="w-5 h-5 rounded-full border border-slate-600 group-hover:border-blue-400 flex items-center justify-center shrink-0">
-                                    <span class="w-2.5 h-2.5 rounded-full bg-blue-500 opacity-0 group-focus:opacity-100 group-active:opacity-100"></span>
+                                    <span class="w-2.5 h-2.5 rounded-full bg-blue-500 ${selectedOption == 2 ? 'opacity-100' : 'opacity-0'}"></span>
                                 </span>
                                 <span class="text-base font-medium">${quiz.questions[questionIndex].o2}</span>
                             </button>
 
-                            <button class="option-btn group w-full bg-[#111827] hover:bg-[#1f293d] border border-slate-800 hover:border-blue-500/50 text-slate-200 text-left p-4 rounded-xl flex items-center gap-x-4 transition-all" onclick="selectOption(3)">
+                            <button class="option-btn group w-full bg-[#111827] ${selectedOption == 3 ? ' border-blue-500' : ' border-slate-800'} hover:bg-[#1f293d] border border-slate-800 hover:border-blue-500/50 text-slate-200 text-left p-4 rounded-xl flex items-center gap-x-4 transition-all" onclick="selectOption(3)">
                                 <span class="w-5 h-5 rounded-full border border-slate-600 group-hover:border-blue-400 flex items-center justify-center shrink-0">
-                                    <span class="w-2.5 h-2.5 rounded-full bg-blue-500 opacity-0 group-focus:opacity-100 group-active:opacity-100"></span>
+                                    <span class="w-2.5 h-2.5 rounded-full bg-blue-500 ${selectedOption == 3 ? 'opacity-100' : 'opacity-0'}"></span>
                                 </span>
                                 <span class="text-base font-medium">${quiz.questions[questionIndex].o3}</span>
                             </button>
 
-                            <button class="option-btn group w-full bg-[#111827] hover:bg-[#1f293d] border border-slate-800 hover:border-blue-500/50 text-slate-200 text-left p-4 rounded-xl flex items-center gap-x-4 transition-all" onclick="selectOption(4)">
+                            <button class="option-btn group w-full bg-[#111827] ${selectedOption == 4 ? ' border-blue-500' : ' border-slate-800'} hover:bg-[#1f293d] border border-slate-800 hover:border-blue-500/50 text-slate-200 text-left p-4 rounded-xl flex items-center gap-x-4 transition-all" onclick="selectOption(4)">
                                 <span class="w-5 h-5 rounded-full border border-slate-600 group-hover:border-blue-400 flex items-center justify-center shrink-0">
-                                    <span class="w-2.5 h-2.5 rounded-full bg-blue-500 opacity-0 group-focus:opacity-100 group-active:opacity-100"></span>
+                                    <span class="w-2.5 h-2.5 rounded-full bg-blue-500 ${selectedOption == 4 ? 'opacity-100' : 'opacity-0'}"></span>
                                 </span>
                                 <span class="text-base font-medium">${quiz.questions[questionIndex].o4}</span>
                             </button>
@@ -868,6 +867,7 @@
     function selectOption(option){
 
         userAnswers[questionIndex] = option;
+        displayQuiz();
     }
 
     function nextQuestion(){
@@ -892,25 +892,255 @@
 
     function submitQuiz(){
 
-        let score = 0;
+    // Check unanswered questions
+    if(userAnswers.some(answer => answer === null)){
+        alert("You have unanswered questions. Please answer all questions before submitting.");
+        return;
+    }
 
-        if(userAnswers.includes(undefined) || userAnswers.includes(null) || userAnswers.length < currentQuiz.questions.length){
-            
-            alert("You have unanswered questions. Please answer all questions before submitting.");
-            return;
+    let score = 0;
 
+    // Calculate score
+    userAnswers.forEach((answer, index) => {
+
+        if(answer == currentQuiz.questions[index].cA){
+            score++;
         }
 
-        userAnswers.forEach((answer, index) => {
+    });
 
-            if(answer == currentQuiz.questions[index].cA){
+    const totalQuestions = currentQuiz.questions.length;
 
-                score++;
+    const percentage = (score / totalQuestions) * 100;
 
-            }
+    // Display result screen
+    displayResults(score, totalQuestions, percentage);
+}
 
-        });
+    function displayResults(score, totalQuestions, percentage){
 
-    }
+    let correctAnswers = 0;
+
+    userAnswers.forEach((answer, index) => {
+
+        if(answer == currentQuiz.questions[index].cA){
+            correctAnswers++;
+        }
+
+    });
+
+
+    quizInterface.innerHTML = `
+
+        <div class="min-h-screen bg-[#111827] text-white p-6">
+
+            <!-- Result Header -->
+            <div class="text-center mb-8">
+
+                <h2 class="text-2xl font-bold">
+                    Exam Results
+                </h2>
+
+                <div class="text-5xl font-bold text-yellow-400 mt-2">
+                    ${percentage}%
+                </div>
+
+                <p class="text-gray-400 mt-2">
+                    Score: ${score} / ${totalQuestions}
+                </p>
+
+            </div>
+
+
+            <!-- Statistics -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+
+                <!-- Time Taken -->
+                <div class="bg-[#1f2937] border border-gray-700 rounded-xl p-6 text-center">
+
+                    <div class="text-blue-500 text-2xl mb-3">
+                        ⏱
+                    </div>
+
+                    <p class="text-gray-400 text-sm">
+                        Time Taken
+                    </p>
+
+                    <p class="text-white font-bold text-lg">
+                        00:07
+                    </p>
+
+                </div>
+
+
+                <!-- Correct Answers -->
+                <div class="bg-[#1f2937] border border-gray-700 rounded-xl p-6 text-center">
+
+                    <div class="text-green-500 text-2xl mb-3">
+                        ✓
+                    </div>
+
+                    <p class="text-gray-400 text-sm">
+                        Correct Answers
+                    </p>
+
+                    <p class="text-white font-bold text-lg">
+                        ${correctAnswers}
+                    </p>
+
+                </div>
+
+
+                <!-- Accuracy -->
+                <div class="bg-[#1f2937] border border-gray-700 rounded-xl p-6 text-center">
+
+                    <div class="text-purple-500 text-2xl mb-3">
+                        ◎
+                    </div>
+
+                    <p class="text-gray-400 text-sm">
+                        Accuracy
+                    </p>
+
+                    <p class="text-white font-bold text-lg">
+                        ${percentage}%
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- Detailed Review -->
+            <div>
+
+                <h3 class="text-xl font-bold mb-4">
+                    Detailed Review
+                </h3>
+
+                <div class="space-y-4">
+
+                    ${currentQuiz.questions.map((question, index) => {
+
+                        const userAnswer = userAnswers[index];
+
+                        const correctAnswer = Number(question.cA);
+
+                        const isCorrect = userAnswer == correctAnswer;
+
+
+                        return `
+
+                            <div class="
+                                ${isCorrect
+                                    ? 'border-l-4 border-green-500'
+                                    : 'border-l-4 border-red-500'
+                                }
+                                bg-[#1f2937]
+                                rounded-lg
+                                p-5
+                            ">
+
+                                <!-- Question Header -->
+                                <div class="flex justify-between items-center mb-3">
+
+                                    <h4 class="font-bold">
+                                        Q${index + 1}: ${question.q}
+                                    </h4>
+
+                                    <span class="
+                                        ${isCorrect
+                                            ? 'text-green-400'
+                                            : 'text-red-400'
+                                        }
+                                    ">
+
+                                        ${isCorrect
+                                            ? '✓ Correct'
+                                            : '✕ Incorrect'
+                                        }
+
+                                    </span>
+
+                                </div>
+
+
+                                <!-- User Answer -->
+                                <p class="text-sm text-gray-400 mb-2">
+
+                                    Your Answer:
+
+                                    <span class="
+                                        ${isCorrect
+                                            ? 'text-green-400'
+                                            : 'text-red-400'
+                                        }
+                                        font-medium
+                                    ">
+                                        ${question[`o${userAnswer}`]}
+                                    </span>
+
+                                </p>
+
+
+                                <!-- Correct Answer -->
+                                ${!isCorrect ? `
+
+                                    <p class="text-sm text-gray-400 mb-3">
+
+                                        Correct Answer:
+
+                                        <span class="text-green-400 font-medium">
+                                            ${question[`o${correctAnswer}`]}
+                                        </span>
+
+                                    </p>
+
+                                ` : ''}
+
+
+                                <!-- Explanation -->
+                                ${question.ex ? `
+
+                                    <div class="bg-[#111827] rounded-lg p-3 text-sm text-gray-300">
+
+                                        <span class="text-blue-400">
+                                            ●
+                                        </span>
+
+                                        ${question.ex}
+
+                                    </div>
+
+                                ` : ''}
+
+                            </div>
+
+                        `;
+
+                    }).join('')}
+
+                </div>
+
+            </div>
+
+
+            <!-- Back Button -->
+            <div class="text-center mt-8">
+
+                <button
+                    onclick="goToDashboard()"
+                    class="bg-slate-700 hover:bg-slate-600 px-6 py-3 rounded-lg font-medium transition"
+                >
+                    Back to Dashboard
+                </button>
+
+            </div>
+
+        </div>
+
+    `;
+}    
+
     </script>
 </html>
