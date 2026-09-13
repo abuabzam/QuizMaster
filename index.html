@@ -394,7 +394,7 @@
 
         }
 
-        function goToAnalytics(){
+    function goToAnalytics(){
 
             const dashBoardPage =  document.getElementById('dashBoardPage');
             const quizPage = document.getElementById('quizPage');
@@ -410,7 +410,7 @@
 
         }   
 
-        function readValues(){
+    function readValues(){
 
             const quiz = {
                 title : document.getElementById('quizTitle').value.trim(),
@@ -577,10 +577,57 @@
         setCookie("quiz_ids",btoa(encodeURIComponent(JSON.stringify(quiz_ids))),30);
       
         alert("Quiz saved successfully!");
+
+        clearQuizForm();
+
+
         
     }
     
+    function clearQuizForm(){
 
+   
+        document.getElementById('quizTitle').value = '';
+        document.getElementById('category').selectedIndex = 0;
+        document.getElementById('timeLimit').value = '';
+        document.getElementById('description').value = '';
+
+
+    
+        const questionBlocks = document.querySelectorAll('.questionBlock');
+
+    
+        questionBlocks.forEach((block, index) => {
+
+            if(index > 0){
+                block.remove();
+            }
+
+        });
+
+
+
+   
+        const firstQuestion = document.querySelector('.questionBlock');
+
+
+   
+        firstQuestion.querySelectorAll('input[type="text"]').forEach(input => {
+            input.value = '';
+        });
+
+
+        firstQuestion.querySelectorAll('input[type="radio"]').forEach(radio => {
+        radio.checked = false;
+        
+    
+        });
+
+
+   
+        questionCount = 1;
+
+    }
 
     function loadQuiz(quiz_id) {
 
@@ -759,13 +806,13 @@
     
     let questionIndex = 0;
     let currentQuiz = null;
-    let userAnswers = new Array(currentQuiz.questions.length).fill(null); 
+    let userAnswers = []; 
 
 
     function startExam(){
 
         questionIndex = 0;
-    
+        userAnswers = [];
 
         displayQuiz();
             
@@ -892,15 +939,15 @@
 
     function submitQuiz(){
 
-    // Check unanswered questions
-    if(userAnswers.some(answer => answer === null)){
+    
+    if(userAnswers.includes(undefined) || userAnswers.includes(null) || userAnswers.length < currentQuiz.questions.length){
         alert("You have unanswered questions. Please answer all questions before submitting.");
         return;
     }
 
     let score = 0;
 
-    // Calculate score
+    
     userAnswers.forEach((answer, index) => {
 
         if(answer == currentQuiz.questions[index].cA){
@@ -911,14 +958,15 @@
 
     const totalQuestions = currentQuiz.questions.length;
 
-    const percentage = (score / totalQuestions) * 100;
+    const percentage = Math.round((score / totalQuestions) * 100);
 
-    // Display result screen
+
     displayResults(score, totalQuestions, percentage);
 }
 
     function displayResults(score, totalQuestions, percentage){
 
+    const quizInterface = document.getElementById("quizInterface");
     let correctAnswers = 0;
 
     userAnswers.forEach((answer, index) => {
@@ -952,10 +1000,10 @@
             </div>
 
 
-            <!-- Statistics -->
+            
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
 
-                <!-- Time Taken -->
+                
                 <div class="bg-[#1f2937] border border-gray-700 rounded-xl p-6 text-center">
 
                     <div class="text-blue-500 text-2xl mb-3">
@@ -973,7 +1021,7 @@
                 </div>
 
 
-                <!-- Correct Answers -->
+               
                 <div class="bg-[#1f2937] border border-gray-700 rounded-xl p-6 text-center">
 
                     <div class="text-green-500 text-2xl mb-3">
