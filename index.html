@@ -173,10 +173,11 @@
             <div class="grid grid-cols-2 gap-4 mt-4 grid-rows-[300px_200px]  ">
                 <div class="border-2 p-6 rounded-lg bg-gray-200 flex flex-col justify-between dark:bg-gray-600  dark:text-white ">
                     <h3 class="text-xl font-semibold dark:text-white">Attempt History</h3>
-                    <p class="font-semibold text-gray-600 dark:text-gray-400">No data yet</p>
+                    <p id="attemptHistory" class="font-semibold text-gray-600 dark:text-gray-400">No data yet</p>
                 </div>
                 <div class="border-2 p-6 rounded-lg bg-gray-200 dark:bg-gray-600 dark:text-white">
                     <h3 class="text-xl font-semibold dark:text-white">Topic Weaknesses</h3>
+                    <div id="topicWeaknesses" ></div>
                 </div>
             </div>
         </section>
@@ -401,12 +402,16 @@
             const questionSession = document.getElementById('questionSession');
             const performanceSession = document.getElementById('performanceSession');
             const quizInterface = document.getElementById('quizInterface');
+            const topicWeaknesses = document.getElementById('topicWeaknesses');
+            const attemptHistory = document.getElementById('attemptHistory');
 
             dashBoardPage.classList.add('hidden');
             quizPage.classList.add('hidden');
             questionSession.classList.add('hidden');
             performanceSession.classList.remove('hidden');
             quizInterface.classList.add('hidden');
+
+            displayAnalytics(topicWeaknesses, attemptHistory);
 
         }   
 
@@ -447,6 +452,9 @@
         const addQuestionBtn = document.getElementById('addQuestionBtn');
         const questionContainer = document.getElementById('questionContainer');
         let questionCount = 1;
+
+        const questionTemplate = document.querySelector('.questionBlock').cloneNode(true);
+
 
         addQuestionBtn.addEventListener('click', function (){
             questionCount ++;
@@ -586,46 +594,32 @@
     
     function clearQuizForm(){
 
-   
         document.getElementById('quizTitle').value = '';
-        document.getElementById('category').selectedIndex = 0;
+        document.getElementById('category').value = 'gk';
         document.getElementById('timeLimit').value = '';
         document.getElementById('description').value = '';
 
 
-    
-        const questionBlocks = document.querySelectorAll('.questionBlock');
+        questionContainer.innerHTML = '';
+        
+        const radios = newQuestion.querySelectorAll('input[type="radio"]');
 
-    
-        questionBlocks.forEach((block, index) => {
-
-            if(index > 0){
-                block.remove();
-            }
-
+        radios.forEach(radio => {
+            radio.name = `correctAnswer-1`;
+            radio.checked = false;
         });
 
+        const inputs = newQuestion.querySelectorAll('input[type="text"]');
 
-
-   
-        const firstQuestion = document.querySelector('.questionBlock');
-
-
-   
-        firstQuestion.querySelectorAll('input[type="text"]').forEach(input => {
+        inputs.forEach(input => {
             input.value = '';
         });
 
-
-        firstQuestion.querySelectorAll('input[type="radio"]').forEach(radio => {
-        radio.checked = false;
-        
-    
-        });
-
-
-   
+        const newQuestion = questionTemplate.cloneNode(true);
+        questionContainer.appendChild(newQuestion);
         questionCount = 1;
+
+        
 
     }
 
@@ -807,13 +801,14 @@
     let questionIndex = 0;
     let currentQuiz = null;
     let userAnswers = []; 
+    
 
 
     function startExam(){
 
         questionIndex = 0;
         userAnswers = [];
-
+        
         displayQuiz();
             
     }
@@ -939,256 +934,293 @@
 
     function submitQuiz(){
 
-    
-    if(userAnswers.includes(undefined) || userAnswers.includes(null) || userAnswers.length < currentQuiz.questions.length){
-        alert("You have unanswered questions. Please answer all questions before submitting.");
-        return;
-    }
-
-    let score = 0;
-
-    
-    userAnswers.forEach((answer, index) => {
-
-        if(answer == currentQuiz.questions[index].cA){
-            score++;
+        if(userAnswers.includes(undefined) || userAnswers.includes(null) || userAnswers.length < currentQuiz.questions.length){
+            alert("You have unanswered questions. Please answer all questions before submitting.");
+            return;
         }
 
-    });
+        let score = 0;
 
-    const totalQuestions = currentQuiz.questions.length;
+        userAnswers.forEach((answer, index) => {
 
-    const percentage = Math.round((score / totalQuestions) * 100);
+            if(answer == currentQuiz.questions[index].cA){
+                score++;
+            }
+        });
 
+        const totalQuestions = currentQuiz.questions.length;
+        const percentage = Math.round((score / totalQuestions) * 100);
 
-    displayResults(score, totalQuestions, percentage);
-}
+        displayResults(score, totalQuestions, percentage);
+        saveAttempt(currentQuiz, score, totalQuestions, percentage);
+        
+    }
 
     function displayResults(score, totalQuestions, percentage){
 
-    const quizInterface = document.getElementById("quizInterface");
-    let correctAnswers = 0;
+        const quizInterface = document.getElementById("quizInterface");
+        let correctAnswers = 0;
 
-    userAnswers.forEach((answer, index) => {
+        userAnswers.forEach((answer, index) => {
+            if(answer == currentQuiz.questions[index].cA){
+                correctAnswers++;
+            }
 
-        if(answer == currentQuiz.questions[index].cA){
-            correctAnswers++;
-        }
-
-    });
+        });
 
 
-    quizInterface.innerHTML = `
+        quizInterface.innerHTML = `
 
-        <div class="min-h-screen bg-[#111827] text-white p-6">
+            <div class="min-h-screen bg-[#111827] text-white p-6">
 
-            <!-- Result Header -->
-            <div class="text-center mb-8">
+            
+                <div class="text-center mb-8">
 
-                <h2 class="text-2xl font-bold">
-                    Exam Results
-                </h2>
+                    <h2 class="text-2xl font-bold">
+                        Exam Results
+                    </h2>
 
-                <div class="text-5xl font-bold text-yellow-400 mt-2">
-                    ${percentage}%
+                    <div class="text-5xl font-bold text-yellow-400 mt-2">
+                        ${percentage}%
+                    </div>
+                    
+                    <p class="text-gray-400 mt-2">
+                        Score: ${score} / ${totalQuestions}
+                    </p>
+
                 </div>
-
-                <p class="text-gray-400 mt-2">
-                    Score: ${score} / ${totalQuestions}
-                </p>
-
-            </div>
 
 
             
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
 
-                
-                <div class="bg-[#1f2937] border border-gray-700 rounded-xl p-6 text-center">
+                    <div class="bg-[#1f2937] border border-gray-700 rounded-xl p-6 text-center">
 
-                    <div class="text-blue-500 text-2xl mb-3">
-                        ⏱
+                        <div class="text-blue-500 text-2xl mb-3">
+                            ⏱
+                        </div>
+
+                        <p class="text-gray-400 text-sm">
+                            Time Taken
+                        </p>
+
+                        <p class="text-white font-bold text-lg">
+                            00:07
+                        </p>
+
                     </div>
-
-                    <p class="text-gray-400 text-sm">
-                        Time Taken
-                    </p>
-
-                    <p class="text-white font-bold text-lg">
-                        00:07
-                    </p>
-
-                </div>
 
 
                
-                <div class="bg-[#1f2937] border border-gray-700 rounded-xl p-6 text-center">
+                    <div class="bg-[#1f2937] border border-gray-700 rounded-xl p-6 text-center">
 
-                    <div class="text-green-500 text-2xl mb-3">
-                        ✓
+                        <div class="text-green-500 text-2xl mb-3">
+                            ✓
+                        </div>
+
+                        <p class="text-gray-400 text-sm">
+                            Correct Answers
+                        </p>
+
+                        <p class="text-white font-bold text-lg">
+                            ${correctAnswers}
+                        </p>
+
                     </div>
 
-                    <p class="text-gray-400 text-sm">
-                        Correct Answers
-                    </p>
 
-                    <p class="text-white font-bold text-lg">
-                        ${correctAnswers}
-                    </p>
+                
+                    <div class="bg-[#1f2937] border border-gray-700 rounded-xl p-6 text-center">
+
+                        <div class="text-purple-500 text-2xl mb-3">
+                            ◎
+                        </div>
+
+                        <p class="text-gray-400 text-sm">
+                            Accuracy
+                        </p>
+
+                        <p class="text-white font-bold text-lg">
+                            ${percentage}%
+                        </p>
+
+                    </div>
 
                 </div>
 
+                <div>
 
-                <!-- Accuracy -->
-                <div class="bg-[#1f2937] border border-gray-700 rounded-xl p-6 text-center">
+                    <h3 class="text-xl font-bold mb-4">
+                        Detailed Review
+                    </h3>
 
-                    <div class="text-purple-500 text-2xl mb-3">
-                        ◎
-                    </div>
+                    <div class="space-y-4">
 
-                    <p class="text-gray-400 text-sm">
-                        Accuracy
-                    </p>
+                        ${currentQuiz.questions.map((question, index) => {
 
-                    <p class="text-white font-bold text-lg">
-                        ${percentage}%
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <!-- Detailed Review -->
-            <div>
-
-                <h3 class="text-xl font-bold mb-4">
-                    Detailed Review
-                </h3>
-
-                <div class="space-y-4">
-
-                    ${currentQuiz.questions.map((question, index) => {
-
-                        const userAnswer = userAnswers[index];
-
-                        const correctAnswer = Number(question.cA);
-
-                        const isCorrect = userAnswer == correctAnswer;
-
+                            const userAnswer = userAnswers[index];
+                            const correctAnswer = Number(question.cA);
+                            const isCorrect = userAnswer == correctAnswer;
 
                         return `
 
-                            <div class="
-                                ${isCorrect
-                                    ? 'border-l-4 border-green-500'
-                                    : 'border-l-4 border-red-500'
-                                }
-                                bg-[#1f2937]
-                                rounded-lg
-                                p-5
-                            ">
+                                <div class="
+                                    ${isCorrect
+                                        ? 'border-l-4 border-green-500'
+                                        : 'border-l-4 border-red-500'
+                                    }
+                                    bg-[#1f2937]
+                                    rounded-lg
+                                    p-5
+                                ">
 
-                                <!-- Question Header -->
-                                <div class="flex justify-between items-center mb-3">
+                                    <div class="flex justify-between items-center mb-3">
 
-                                    <h4 class="font-bold">
-                                        Q${index + 1}: ${question.q}
-                                    </h4>
+                                        <h4 class="font-bold">
+                                            Q${index + 1}: ${question.q}
+                                        </h4>
 
-                                    <span class="
-                                        ${isCorrect
-                                            ? 'text-green-400'
-                                            : 'text-red-400'
-                                        }
-                                    ">
+                                        <span class="
+                                            ${isCorrect
+                                                ? 'text-green-400'
+                                                : 'text-red-400'
+                                            }
+                                        ">
 
-                                        ${isCorrect
-                                            ? '✓ Correct'
-                                            : '✕ Incorrect'
-                                        }
+                                            ${isCorrect
+                                                ? '✓ Correct'
+                                                : '✕ Incorrect'
+                                            }
 
-                                    </span>
+                                        </span>
 
-                                </div>
+                                    </div>
 
+                                    <p class="text-sm text-gray-400 mb-2">
 
-                                <!-- User Answer -->
-                                <p class="text-sm text-gray-400 mb-2">
+                                        Your Answer:
 
-                                    Your Answer:
-
-                                    <span class="
-                                        ${isCorrect
-                                            ? 'text-green-400'
-                                            : 'text-red-400'
-                                        }
-                                        font-medium
-                                    ">
-                                        ${question[`o${userAnswer}`]}
-                                    </span>
-
-                                </p>
-
-
-                                <!-- Correct Answer -->
-                                ${!isCorrect ? `
-
-                                    <p class="text-sm text-gray-400 mb-3">
-
-                                        Correct Answer:
-
-                                        <span class="text-green-400 font-medium">
-                                            ${question[`o${correctAnswer}`]}
+                                        <span class="
+                                            ${isCorrect
+                                                ? 'text-green-400'
+                                                : 'text-red-400'
+                                            }
+                                            font-medium
+                                        ">
+                                            ${question[`o${userAnswer}`]}
                                         </span>
 
                                     </p>
 
-                                ` : ''}
+
+                                    
+                                    ${!isCorrect ? `
+
+                                        <p class="text-sm text-gray-400 mb-3">
+
+                                            Correct Answer:
+                                            <span class="text-green-400 font-medium">
+                                                ${question[`o${correctAnswer}`]}
+                                            </span>
+
+                                        </p>
+
+                                    ` : ''}
 
 
-                                <!-- Explanation -->
-                                ${question.ex ? `
+                                
+                                    ${question.ex ? `
 
-                                    <div class="bg-[#111827] rounded-lg p-3 text-sm text-gray-300">
+                                        <div class="bg-[#111827] rounded-lg p-3 text-sm text-gray-300">
 
-                                        <span class="text-blue-400">
-                                            ●
-                                        </span>
+                                            <span class="text-blue-400">
+                                                ●
+                                            </span>
 
-                                        ${question.ex}
+                                            ${question.ex}
 
-                                    </div>
+                                        </div>
 
-                                ` : ''}
+                                    ` : ''}
 
-                            </div>
+                                </div>
 
-                        `;
+                            `;
 
-                    }).join('')}
+                        }).join('')}
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="text-center mt-8">
+
+                    <button
+                        onclick="goToDashboard()"
+                        class="bg-slate-700 hover:bg-slate-600 px-6 py-3 rounded-lg font-medium transition"
+                    >
+                        Back to Dashboard
+                    </button>
 
                 </div>
 
             </div>
 
+        `;
+    }    
 
-            <!-- Back Button -->
-            <div class="text-center mt-8">
+   
 
-                <button
-                    onclick="goToDashboard()"
-                    class="bg-slate-700 hover:bg-slate-600 px-6 py-3 rounded-lg font-medium transition"
-                >
-                    Back to Dashboard
-                </button>
 
-            </div>
+    function saveAttempt(currentQuiz, score, totalQuestions, percentage){
+         
+        const attempt = {
 
-        </div>
+            quizTitle: currentQuiz.title,
+            score: score,
+            totalQuestions: totalQuestions,
+            percentage: percentage,
+            date: new Date().toLocaleDateString(),
 
-    `;
-}    
+        };
+        let attempts = [];
+        const existingAttempts = getCookie('attemptQuiz');
+        if(existingAttempts){
+            try{
+                attempts = JSON.parse(decodeURIComponent(atob(existingAttempts)));
+            }
+            catch (error) {
+                console.error('could not read attempts :',error);
+                attempts = [];
+            }
+        }
+        attempts.push(attempt);
 
+        setCookie(`attemptQuiz`, btoa(encodeURIComponent(JSON.stringify(attempts))), 30);
+
+    }
+
+    function displayAnalytics(topicWeaknesses, attemptHistory) {
+
+        const existingAttempts = getCookie('attemptQuiz');
+        let attempts = [];
+        
+        if (existingAttempts) {
+            try {
+                attempts = JSON.parse(decodeURIComponent(atob(existingAttempts)));
+            }
+            catch (error)
+            {
+                console.error('Could not read attempts:', error);
+                attempts = [];
+            }
+        
+        topicWeaknesses.innerHTML = "";
+
+        
+        }
+    }
     </script>
 </html>
